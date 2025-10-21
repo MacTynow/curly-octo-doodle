@@ -31,9 +31,64 @@ If you'd like to check that the services are running and serving traffic properl
 
 ## ArgoCD
 
-Staging always runs the latest commit from the `main` branch in the repo.
+If you choose to use the cli, after starting the tunnel, run `make argocd-login` to configure it.
+
+### Staging
+
+Staging always runs the latest commit from the `main` branch in the repo. A push to that branch will auto-deploy to staging.
+
+### Production
+
 Promoting a version to production can be done by creating and merging a PR into the `prd` branch, or with `make promote`.
-Rollbacks can be triggered from the ArgoCD UI or with the argocd cli.
+
+### Rollbacks 
+
+Rollbacks can be triggered from the ArgoCD UI or with the [argocd cli](https://argo-cd.readthedocs.io/en/stable/user-guide/commands/argocd_app_rollback/). **Auto-sync will need to be disabled for this to work.**
+
+The below example demonstrates a rollback with the cli.
+```
+> argocd app history argocd/nginx-app-staging
+SOURCE  https://github.com/MacTynow/curly-octo-doodle.git
+ID      DATE                           REVISION
+0       2025-10-21 14:54:56 +0800 CST  main (1bdda16)
+1       2025-10-21 17:47:38 +0800 CST  main (2682e24)
+> argocd app set argocd/nginx-app-staging --sync-policy manual && argocd app rollback argocd/nginx-app-staging 0
+TIMESTAMP                  GROUP        KIND   NAMESPACE                    NAME    STATUS   HEALTH        HOOK  MESSAGE
+2025-10-21T17:50:23+08:00          ConfigMap  stg-internal          nginx-config    Synced                       
+2025-10-21T17:50:23+08:00            Service  stg-internal             nginx-app    Synced  Healthy              
+2025-10-21T17:50:23+08:00   apps  Deployment  stg-internal             nginx-app    Synced  Healthy              
+2025-10-21T17:50:23+08:00            Service  stg-internal             nginx-app    Synced  Healthy              service/nginx-app configured
+2025-10-21T17:50:23+08:00   apps  Deployment  stg-internal             nginx-app    Synced  Healthy              deployment.apps/nginx-app unchanged
+2025-10-21T17:50:23+08:00          ConfigMap  stg-internal          nginx-config    Synced                       configmap/nginx-config unchanged
+2025-10-21T17:50:23+08:00            Service  stg-internal             nginx-app  OutOfSync  Healthy              service/nginx-app configured
+
+Name:               argocd/nginx-app-staging
+Project:            default
+Server:             https://kubernetes.default.svc
+Namespace:          stg-internal
+URL:                https://argocd.example.com/applications/argocd/nginx-app-staging
+Source:
+- Repo:             https://github.com/MacTynow/curly-octo-doodle.git
+  Target:           main
+  Path:             argocd/manifests/stg
+SyncWindow:         Sync Allowed
+Sync Policy:        Manual
+Sync Status:        OutOfSync from main (2682e24)
+Health Status:      Healthy
+
+Operation:          Sync
+Sync Revision:      1bdda16bcc5256f1f2f80cef141084ca1963937c
+Phase:              Succeeded
+Start:              2025-10-21 17:50:23 +0800 CST
+Finished:           2025-10-21 17:50:23 +0800 CST
+Duration:           0s
+Message:            successfully synced (all tasks run)
+
+GROUP  KIND        NAMESPACE     NAME          STATUS     HEALTH   HOOK  MESSAGE
+       ConfigMap   stg-internal  nginx-config  Synced                    configmap/nginx-config unchanged
+       Service     stg-internal  nginx-app     OutOfSync  Healthy        service/nginx-app configured
+apps   Deployment  stg-internal  nginx-app     Synced     Healthy        deployment.apps/nginx-app unchanged
+```
 
 ## Cleanup 
 
@@ -72,4 +127,4 @@ For all these metrics, I would start with an evaluation of 5 minutes unless spec
 
 ### Notes and troubleshooting
 
-I couldn't get the ingress to work on MacOS, similar issue to https://github.com/kubernetes/minikube/issues/12899, and I didn't want to have to force the user to use sudo so I decided to fallback to using plain kubectl port-forwarding.
+I couldn't get the ingress addon to work on MacOS, similar issue to https://github.com/kubernetes/minikube/issues/12899, and I didn't want to have to force the user to use sudo so I decided to fallback to using plain kubectl port-forwarding instead of `minikube tunnel`.
