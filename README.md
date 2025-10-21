@@ -28,7 +28,7 @@ In order to access the ArgoCD UI, run `make tunnel` and open the link in your br
 ## ArgoCD
 
 Staging always runs the latest version of the app in the repo.
-Promoting a version to production can be done with `make promote`.
+Promoting a version to production can be done by creating and merging a PR into the `prd` branch, or with `make promote`.
 Rollbacks can be triggered from the ArgoCD UI or with the argocd cli.
 
 ## Cleanup 
