@@ -13,6 +13,7 @@
 The following should be installed on your system:
 - make
 - minikube
+- docker
 - kubectl
 - helm
 - terraform
@@ -25,7 +26,6 @@ This also assumes your kubernetes configuration is stored in `~/.kube/config`.
 ## Deployment
 
 Run `make` to start the cluster, provision the namespaces and deploy ArgoCD and its workflows.
-In order to access the ArgoCD UI, run `make tunnel` and open the link in your browser using the credentials displayed in the terminal.
 
 If you'd like to check that the services are running and serving traffic properly, run:
 - `kubectl port-forward service/nginx-app -n stg-internal 8081:8080` for staging
@@ -33,7 +33,10 @@ If you'd like to check that the services are running and serving traffic properl
 
 ## ArgoCD
 
+In order to access the ArgoCD UI, run `make tunnel`, open the link in your browser after accepting the self-signed certificate, and use the credentials displayed in the terminal.
 If you choose to use the cli, after starting the tunnel, run `make argocd-login` to configure it.
+
+If an app doesn't auto-sync after a few minutes you can click the `refresh` button in the UI or refresh with the cli.
 
 ### Staging
 

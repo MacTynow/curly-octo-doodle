@@ -66,10 +66,12 @@ register-apps:
 
 promote:
 	@echo "Promoting $$(git rev-parse HEAD) to production..."
+	@git stash
 	@git checkout prd
 	@git merge main
 	@git push origin prd
 	@git checkout main
+	@git stash pop
 
 argocd-login:
 	@argocd login localhost:8080 --insecure --username admin --password $$(kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath='{.data.password}' | base64 -d)
