@@ -1,5 +1,5 @@
 .PHONY: all start stop delete setup check-minikube check-terraform terraform-init terraform-apply terraform-destroy check-helm helm-install helm-delete check-argocd \
-	promote rollback
+	promote rollback register-apps
 
 CLUSTER_NAME = hostaway
 CPUS ?= 2
@@ -7,7 +7,7 @@ MEMORY ?= 4096
 DRIVER ?= docker
 KUBERNETES_VERSION ?= stable
 
-all: setup terraform-run
+all: setup terraform-run helm-install register-apps
 
 start:
 	minikube start \
@@ -59,6 +59,17 @@ tunnel:
 	@echo "Access ArgoCD UI at https://localhost:8080"
 	@echo "User: Admin | Password: $$(kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath='{.data.password}' | base64 -d)"
 	@kubectl port-forward service/argocd-server -n argocd 8080:443
+
+register-apps:
+	@kubectl apply -f argocd/app-stg.yaml
+	@kubectl apply -f argocd/app-prd.yaml
+
+promote:
+	@echo "Promoting $$(git rev-parse HEAD) to production..."
+	@git checkout prd
+	@git merge main
+	@git push origin prd
+	@git checkout main
 
 clean: terraform-destroy delete
 

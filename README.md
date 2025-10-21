@@ -5,7 +5,7 @@
 - [x] Set up a local Kubernetes cluster using Minikube.
 - [x] Use Terraform to provision the cluster with separate namespaces for internal vs external applications and any different environments.
 - [x] Install ArgoCD on the cluster using Helm.
-- [ ] Demonstrate GitOps workflows with ArgoCD: Deploy a simple Nginx app with output "hello it's me". We should be able to deploy a new version to staging, promote it to production, rollback to any version.
+- [x] Demonstrate GitOps workflows with ArgoCD: Deploy a simple Nginx app with output "hello it's me". We should be able to deploy a new version to staging, promote it to production, rollback to any version.
 - [ ] Define key monitoring metrics and thresholds.
 
 ## Prerequisites 
@@ -29,7 +29,7 @@ In order to access the ArgoCD UI, run `make tunnel` and open the link in your br
 
 Staging always runs the latest version of the app in the repo.
 Promoting a version to production can be done with `make promote`.
-Rolling back can be done with `make rollback <COMMIT_HASH>`.
+Rollbacks can be triggered from the ArgoCD UI or with the argocd cli.
 
 ## Cleanup 
 
