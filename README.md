@@ -20,6 +20,8 @@ The following should be installed on your system:
 The following are optional:
 - argocd cli
 
+This also assumes your kubernetes configuration is stored in `~/.kube/config`.
+
 ## Deployment
 
 Run `make` to start the cluster, provision the namespaces and deploy ArgoCD and its workflows.
