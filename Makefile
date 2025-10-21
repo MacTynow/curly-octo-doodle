@@ -1,5 +1,5 @@
 .PHONY: all start stop delete setup check-minikube check-terraform terraform-init terraform-apply terraform-destroy check-helm helm-install helm-delete check-argocd \
-	promote rollback register-apps
+	promote register-apps argocd-login tunnel
 
 CLUSTER_NAME = hostaway
 CPUS ?= 2
