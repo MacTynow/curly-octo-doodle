@@ -65,6 +65,14 @@ register-apps:
 	@kubectl apply -f argocd/app-prd.yaml
 
 promote:
+	@if [ -n "$$(git status --porcelain)" ]; then \
+		echo "Error: You have uncommitted changes. Commit or stash them first."; \
+		exit 1; \
+	fi
+	@if [ "$$(git rev-parse @)" != "$$(git rev-parse @{u})" ]; then \
+		echo "Error: Current branch is not pushed to remote. Push first."; \
+		exit 1; \
+	fi
 	@echo "Promoting $$(git rev-parse HEAD) to production..."
 	@git checkout prd
 	@git merge main
