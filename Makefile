@@ -71,5 +71,8 @@ promote:
 	@git push origin prd
 	@git checkout main
 
+argocd-login:
+	@argocd login localhost:8080 --insecure --username admin --password $$(kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath='{.data.password}' | base64 -d)
+
 clean: terraform-destroy delete
 
