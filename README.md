@@ -72,11 +72,11 @@ Commit to main
 
 ### Promoting a commit to production
 
-Promoting a version to production can be done by creating and merging a PR into the `prd` branch, or with `make promote`.
+Promoting a version to production can be done by creating and merging a PR into the `prd` branch ([see sample PR](https://github.com/MacTynow/curly-octo-doodle/pull/1)), or with `make promote`.
 
 ### Rollbacks 
 
-Rollbacks should be done through Git to maintain GitOps principles. Either revert the PR through the Github UI or revert to a specific commit.
+Rollbacks should be done through Git to maintain GitOps principles. Either [revert the PR](https://github.com/MacTynow/curly-octo-doodle/compare/prd...revert-1-main?expand=1) through the Github UI or revert to a specific commit.
 
 ```bash
 git log --oneline           # Find the commit to revert to
