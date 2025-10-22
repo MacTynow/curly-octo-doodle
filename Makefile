@@ -15,7 +15,6 @@ start:
 		--memory=$(MEMORY) \
 		--driver=$(DRIVER) \
 		--kubernetes-version=$(KUBERNETES_VERSION) \
-		--addons=ingress \
 		-p $(CLUSTER_NAME)
 
 stop:
@@ -48,9 +47,9 @@ terraform-run: check-terraform terraform-init
 terraform-destroy:
 	@terraform destroy --auto-approve
 
-helm-install:
+helm-install: terraform-run
 	@helm repo add argo https://argoproj.github.io/argo-helm
-	@helm install argocd argo/argo-cd --namespace argocd --values values.yaml
+	@helm install argocd argo/argo-cd --namespace argocd
 
 helm-delete:
 	@helm delete argocd --namespace argocd
@@ -65,6 +64,10 @@ register-apps:
 	@kubectl apply -f argocd/app-prd.yaml
 
 promote:
+	@if [ "$$(git branch --show-current)" != "main" ]; then \
+			echo "Error: Must be on main branch to promote"; \
+			exit 1; \
+	fi
 	@if [ -n "$$(git status --porcelain)" ]; then \
 		echo "Error: You have uncommitted changes. Commit or stash them first."; \
 		exit 1; \
