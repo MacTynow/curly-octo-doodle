@@ -23,32 +23,68 @@ The following are optional:
 
 This also assumes your kubernetes configuration is stored in `~/.kube/config`.
 
+## Application Architecture
+
+The nginx application is defined in the `app/` directory:
+- `Dockerfile`: Simple nginx container with custom config
+- `nginx.conf`: Server configuration that returns "hello it's me"
+
+It can be built with `make build`. In a production environment, a pipeline would run this and push the image to a registry.
+
+For this local assessment, the application is deployed using ConfigMaps to inject the nginx configuration into the base `nginx:alpine` image. This approach avoids the need for a container registry and simplifies the GitOps workflow.
+
 ## Deployment
 
 Run `make` to start the cluster, provision the namespaces and deploy ArgoCD and its workflows.
 
 If you'd like to check that the services are running and serving traffic properly, run:
-- `kubectl port-forward service/nginx-app -n stg-internal 8081:8080` for staging
-- `kubectl port-forward service/nginx-app -n prd-internal 8082:8080` for production
+```bash
+kubectl port-forward service/nginx-app -n stg-internal 8081:8080 # staging
+kubectl port-forward service/nginx-app -n prd-internal 8082:8080 # production
+```
+
+Then test with:
+```bash
+curl http://localhost:8081  # staging
+curl http://localhost:8082  # production
+```
+
+In this assessment, I'm only using the internal namespaces.
 
 ## ArgoCD
 
 In order to access the ArgoCD UI, run `make tunnel`, open the link in your browser after accepting the self-signed certificate, and use the credentials displayed in the terminal.
 If you choose to use the cli, after starting the tunnel, run `make argocd-login` to configure it.
 
-If an app doesn't auto-sync after a few minutes you can click the `refresh` button in the UI or refresh with the cli.
 
-### Staging
+### GitOps Workflow
 
-Staging always runs the latest commit from the `main` branch in the repo. A push to that branch will auto-deploy to staging.
+```
+Commit to main
+         |
+         v
+    main branch ──────> ArgoCD sync ──────> stg-internal namespace
+         |
+         | make promote OR pull request (merge main -> prd)
+         v
+    prd branch ───────> ArgoCD sync ──────> prd-internal namespace
+```
 
-### Production
+### Promoting a commit to production
 
 Promoting a version to production can be done by creating and merging a PR into the `prd` branch, or with `make promote`.
 
 ### Rollbacks 
 
-Rollbacks can be done by reverting a PR into the `prd` branch, or with `make rollback`. This allows to follow a strict GitOps workflow.
+Rollbacks should be done through Git to maintain GitOps principles. Either revert the PR through the Github UI or revert to a specific commit.
+
+```bash
+git log --oneline           # Find the commit to revert to
+git revert <commit-hash>
+git push origin <prd|main>
+```
+
+Since auto-sync is enabled, we can't rollback through the UI or cli.
 
 ## Cleanup 
 

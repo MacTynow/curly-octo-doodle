@@ -1,5 +1,5 @@
 .PHONY: all start stop delete setup check-minikube check-terraform terraform-init terraform-apply terraform-destroy check-helm helm-install helm-delete check-argocd \
-	promote register-apps argocd-login tunnel
+	promote register-apps argocd-login tunnel build
 
 CLUSTER_NAME = hostaway
 CPUS ?= 2
@@ -49,14 +49,14 @@ terraform-destroy:
 
 helm-install: terraform-run
 	@helm repo add argo https://argoproj.github.io/argo-helm
-	@helm install argocd argo/argo-cd --namespace argocd
+	@helm install argocd argo/argo-cd --namespace argocd --values argocd/values.yaml
 
 helm-delete:
 	@helm delete argocd --namespace argocd
 
 tunnel:
 	@echo "Access ArgoCD UI at https://localhost:8080"
-	@echo "User: Admin | Password: $$(kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath='{.data.password}' | base64 -d)"
+	@echo "User: admin | Password: $$(kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath='{.data.password}' | base64 -d)"
 	@kubectl port-forward service/argocd-server -n argocd 8080:443
 
 register-apps:
@@ -81,9 +81,15 @@ promote:
 	@git merge main
 	@git push origin prd
 	@git checkout main
+	@echo "✓ Successfully promoted to production!"
 
 argocd-login:
 	@argocd login localhost:8080 --insecure --username admin --password $$(kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath='{.data.password}' | base64 -d)
+
+build:
+	@echo "Building application image..."
+	@cd app && docker build -t hostaway/nginx-app:latest .
+	@echo "✓ Image built: hostaway/nginx-app:latest"
 
 clean: terraform-destroy delete
 
