@@ -83,7 +83,7 @@ Promoting a version to production can be done by creating and merging a PR into 
 
 ### Rollbacks 
 
-Rollbacks should be done through Git to maintain GitOps principles. Either [revert the PR](https://github.com/MacTynow/curly-octo-doodle/compare/prd...revert-1-main?expand=1) through the Github UI or revert to a specific commit.
+Rollbacks should be done through Git to maintain GitOps principles. Either [revert the PR](https://github.com/MacTynow/curly-octo-doodle/compare/prd...revert-1-main?expand=1) through the Github UI or revert to a specific commit on the target branch.
 
 ```bash
 git log --oneline           # Find the commit to revert to
