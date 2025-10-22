@@ -79,7 +79,7 @@ promote:
 	@echo "Promoting $$(git rev-parse HEAD) to production..."
 	@git checkout prd
 	@git pull --ff-only
-	@git merge main
+	@git merge main --no-edit
 	@git push origin prd
 	@git checkout main
 	@echo "✓ Successfully promoted to production!"
