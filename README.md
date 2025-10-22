@@ -58,6 +58,7 @@ In order to access the ArgoCD UI, run `make tunnel`, open the link in your brows
 make tunnel
 Access ArgoCD UI at https://localhost:8080
 User: admin | Password: uyp89Rq9ItXjYzdn
+...
 ```
 
 If you choose to use the cli, after starting the tunnel, run `make argocd-login` to configure it.
