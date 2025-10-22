@@ -77,7 +77,7 @@ promote:
 		exit 1; \
 	fi
 	@echo "Promoting $$(git rev-parse HEAD) to production..."
-	@git checkout prd --track origin/prd
+	@git checkout prd
 	@git pull --ff-only
 	@git merge main
 	@git push origin prd
