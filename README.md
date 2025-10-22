@@ -53,7 +53,13 @@ In this assessment, I'm only using the internal namespaces.
 
 ## ArgoCD
 
-In order to access the ArgoCD UI, run `make tunnel`, open the link in your browser after accepting the self-signed certificate, and use the credentials displayed in the terminal.
+In order to access the ArgoCD UI, run `make tunnel`, open the link in your browser after accepting the self-signed certificate (in production we'd use a proper certificate), and use the generated credentials displayed in the terminal, eg:
+```bash
+make tunnel
+Access ArgoCD UI at https://localhost:8080
+User: admin | Password: uyp89Rq9ItXjYzdn
+```
+
 If you choose to use the cli, after starting the tunnel, run `make argocd-login` to configure it.
 
 
