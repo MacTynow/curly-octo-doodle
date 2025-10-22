@@ -36,7 +36,7 @@ check-helm:
 	@which helm > /dev/null || (echo "helm not found. Install from https://helm.sh/docs/intro/install/" && exit 1)
 
 check-argocd:
-	@which argocd > /dev/null || (echo "helm not found. Install from https://argo-cd.readthedocs.io/en/stable/getting_started/#2-download-argo-cd-cli" && exit 1)
+	@which argocd > /dev/null || (echo "argocd not found. Install from https://argo-cd.readthedocs.io/en/stable/getting_started/#2-download-argo-cd-cli" && exit 1)
 
 terraform-init:
 	@terraform init
