@@ -78,6 +78,7 @@ promote:
 	fi
 	@echo "Promoting $$(git rev-parse HEAD) to production..."
 	@git checkout prd
+	@git pull --ff-only
 	@git merge main
 	@git push origin prd
 	@git checkout main
