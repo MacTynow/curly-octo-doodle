@@ -4,7 +4,7 @@ kind: Kustomization
 namespace: prd-internal
 
 resources:
-  - ../../../../base
+  - ../../../base
 
 replicas:
   - name: nginx-app
