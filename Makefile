@@ -1,5 +1,5 @@
 .PHONY: all start stop delete setup check-minikube check-terraform terraform-init terraform-apply terraform-destroy check-helm helm-install helm-delete check-argocd \
-	promote register-apps argocd-login tunnel build
+	promote register-apps argocd-login tunnel build test
 
 CLUSTER_NAME = hostaway
 CPUS ?= 2
@@ -15,6 +15,7 @@ start:
 		--memory=$(MEMORY) \
 		--driver=$(DRIVER) \
 		--kubernetes-version=$(KUBERNETES_VERSION) \
+		--addons ingress \
 		-p $(CLUSTER_NAME)
 
 stop:
@@ -60,8 +61,10 @@ tunnel:
 	@kubectl port-forward service/argocd-server -n argocd 8080:443
 
 register-apps:
-	@kubectl apply -f argocd/app-stg.yaml
-	@kubectl apply -f argocd/app-prd.yaml
+	@kubectl apply -f argocd/applications/app-stg-internal.yaml
+	@kubectl apply -f argocd/applications/app-prd-internal.yaml
+	@kubectl apply -f argocd/applications/app-stg-external.yaml
+	@kubectl apply -f argocd/applications/app-prd-external.yaml
 
 promote:
 	@if [ "$$(git branch --show-current)" != "main" ]; then \
@@ -91,6 +94,10 @@ build:
 	@echo "Building application image..."
 	@cd app && docker build -t hostaway/nginx-app:latest .
 	@echo "✓ Image built: hostaway/nginx-app:latest"
+
+test:
+	@echo "Testing staging external through minikube tunnel"
+	@curl --resolve "stg-external.example.com:80:127.0.0.1" -i http://stg-external.example.com
 
 clean: terraform-destroy delete
 
