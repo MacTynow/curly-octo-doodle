@@ -5,6 +5,7 @@ namespace: stg-external
 
 resources:
   - ../../../base
+  - ingress.yaml
 
 replicas:
   - name: nginx-app
