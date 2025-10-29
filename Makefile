@@ -15,6 +15,7 @@ start:
 		--memory=$(MEMORY) \
 		--driver=$(DRIVER) \
 		--kubernetes-version=$(KUBERNETES_VERSION) \
+		--addons ingress \
 		-p $(CLUSTER_NAME)
 
 stop:
@@ -60,8 +61,10 @@ tunnel:
 	@kubectl port-forward service/argocd-server -n argocd 8080:443
 
 register-apps:
-	@kubectl apply -f argocd/app-stg.yaml
-	@kubectl apply -f argocd/app-prd.yaml
+	@kubectl apply -f argocd/applications/app-stg-internal.yaml
+	@kubectl apply -f argocd/applications/app-prd-internal.yaml
+	@kubectl apply -f argocd/applications/app-stg-external.yaml
+	@kubectl apply -f argocd/applications/app-prd-external.yaml
 
 promote:
 	@if [ "$$(git branch --show-current)" != "main" ]; then \

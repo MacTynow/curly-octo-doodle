@@ -1,17 +1,17 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: nginx-app-staging
+  name: nginx-app-production-internal
   namespace: argocd
 spec:
   project: default
   source:
     repoURL: https://github.com/MacTynow/curly-octo-doodle.git
-    targetRevision: main
-    path: argocd/manifests/stg
+    targetRevision: prd
+    path: argocd/manifests/overlays/prd/internal
   destination:
     server: https://kubernetes.default.svc
-    namespace: stg-internal
+    namespace: prd-internal
   syncPolicy:
     automated:
       prune: true

@@ -1,0 +1,11 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: prd-internal
+
+resources:
+  - ../../../../base
+
+replicas:
+  - name: nginx-app
+    count: 3
