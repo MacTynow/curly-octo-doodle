@@ -1,5 +1,5 @@
 .PHONY: all start stop delete setup check-minikube check-terraform terraform-init terraform-apply terraform-destroy check-helm helm-install helm-delete check-argocd \
-	promote register-apps argocd-login tunnel build
+	promote register-apps argocd-login tunnel build test
 
 CLUSTER_NAME = hostaway
 CPUS ?= 2
@@ -94,6 +94,10 @@ build:
 	@echo "Building application image..."
 	@cd app && docker build -t hostaway/nginx-app:latest .
 	@echo "✓ Image built: hostaway/nginx-app:latest"
+
+test:
+	@echo "Testing staging external through minikube tunnel"
+	@curl --resolve "stg-external.example.com:80:127.0.0.1" -i http://stg-external.example.com
 
 clean: terraform-destroy delete
 
