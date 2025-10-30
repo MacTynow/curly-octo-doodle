@@ -61,6 +61,8 @@ User: admin | Password: uyp89Rq9ItXjYzdn
 ...
 ```
 
+**If the apps show a sync error at this point, hit the refresh button**.
+
 If you choose to use the cli, after starting the tunnel, run `make argocd-login` to configure it.
 
 
