@@ -10,7 +10,7 @@ data:
         server_name localhost;
 
         location / {
-            return 200 "hello it's me\n";
+            return 200 "hello it's Charles\n";
             add_header Content-Type text/plain;
         }
     }
